@@ -211,6 +211,28 @@ export class N8nApiClient {
       delete workflowToUpdate.createdAt; // Remove createdAt property as it's read-only
       delete workflowToUpdate.updatedAt; // Remove updatedAt property as it's read-only
       delete workflowToUpdate.tags; // Remove tags property as it's read-only
+      // Filter settings to only include valid n8n API properties
+      if (workflowToUpdate.settings) {
+        const validSettingsKeys = [
+          "saveExecutionProgress", "saveManualExecutions", "saveDataErrorExecution",
+          "saveDataSuccessExecution", "executionTimeout", "timezone"
+        ];
+        const filteredSettings: Record<string, any> = {};
+        for (const key of validSettingsKeys) {
+          if (key in workflowToUpdate.settings) {
+            filteredSettings[key] = workflowToUpdate.settings[key];
+          }
+        }
+        // n8n API requires settings - provide defaults if empty
+        workflowToUpdate.settings = Object.keys(filteredSettings).length > 0 ? filteredSettings : {
+          saveExecutionProgress: true,
+          saveManualExecutions: true,
+          saveDataErrorExecution: "all",
+          saveDataSuccessExecution: "all",
+          executionTimeout: 3600,
+          timezone: "UTC"
+        };
+      }
 
       // Log request for debugging
       if (this.config.debug) {
