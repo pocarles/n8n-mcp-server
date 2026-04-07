@@ -17,8 +17,8 @@ import { URL } from 'url';
  */
 const runWebhookSchema = z.object({
   workflowName: z.string().describe('Name of the workflow to execute (e.g., "hello-world")'),
-  data: z.record(z.any()).optional().describe('Input data to pass to the webhook'),
-  headers: z.record(z.string()).optional().describe('Additional headers to send with the request')
+  data: z.record(z.string(), z.any()).optional().describe('Input data to pass to the webhook'),
+  headers: z.record(z.string(), z.string()).optional().describe('Additional headers to send with the request')
 });
 
 /**
